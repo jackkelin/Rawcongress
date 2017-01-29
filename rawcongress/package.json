@@ -10,7 +10,10 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
-    "vue": "^2.1.0"
+    "axios": "^0.15.3",
+    "cors": "^2.8.1",
+    "vue": "^2.1.0",
+    "vue-axios": "^1.2.2"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
