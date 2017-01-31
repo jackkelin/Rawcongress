@@ -45,26 +45,32 @@ function getMembers() {
     baseURL: 'https://api.propublica.org/congress/v1',
     headers: { 'X-Api-key': 'PPo8NOUWRG9i9WcBKJVIVacNERznlT50adGL56wN' }
   });
-  instance.get(`https://api.propublica.org/congress/v1/114/house/members.json`).then((response) => {
-     console.log(response);
-     const cm = response.data.results[0].members;
-     console.log(cm);
-     for(var i = 0; i < cm.length; i++) {
-      data.push(
-        {
-          last_name  : cm[i].last_name,
-          first_name : cm[i].first_name,
-          party      : cm[i].party,
-          state      : cm[i].state,
-        });
-     }
-    var dt = JSON.stringify(data, null, 2);
-    fs.writeFile('congress.json', dt);
+  var dataFile = {
+    house_members: 'data/house-members.json',
+    senate_members: 'data/senate-members.json',
+    house_bills: 'data/house-bills.json',
+  }
+  // Get House members
+  instance.get(`https://api.propublica.org/congress/v1/114/house/members.json`).then((response) => {;
+    var cm = response.data.results[0].members;
+    var dt = JSON.stringify(cm, null, 2);
+    fs.writeFile(dataFile.house_members, dt);
+  });
+  // Get Senate members
+  instance.get(`https://api.propublica.org/congress/v1/114/senate/members.json`).then((response) => {;
+    var cm = response.data.results[0].members;
+    var dt = JSON.stringify(cm, null, 2);
+    fs.writeFile(dataFile.senate_members, dt);
+  });
+  // Get House bills — introduced
+  instance.get(`https://api.propublica.org/congress/v1/114/house/introduced.json`).then((response) => {;
+    var bd = response.data.results[0].members;
+    var dt = JSON.stringify(bd, null, 2);
+    fs.appendFile(dataFile.house_bills, dt);
   });
 }
 
 getMembers();
-
 
 // proxy api requests
 Object.keys(proxyTable).forEach(function (context) {
