@@ -16,6 +16,7 @@ var port = process.env.PORT || config.dev.port
 var proxyTable = config.dev.proxyTable
 
 var cors = require('cors')
+var axios = require('axios')
 var app = express()
 app.use(cors())
 var compiler = webpack(webpackConfig)
@@ -35,6 +36,35 @@ compiler.plugin('compilation', function (compilation) {
     cb()
   })
 })
+
+var fs = require('fs')
+
+function getMembers() {
+  var data = [];
+  var instance = axios.create({
+    baseURL: 'https://api.propublica.org/congress/v1',
+    headers: { 'X-Api-key': 'PPo8NOUWRG9i9WcBKJVIVacNERznlT50adGL56wN' }
+  });
+  instance.get(`https://api.propublica.org/congress/v1/114/house/members.json`).then((response) => {
+     console.log(response);
+     const cm = response.data.results[0].members;
+     console.log(cm);
+     for(var i = 0; i < cm.length; i++) {
+      data.push(
+        {
+          last_name  : cm[i].last_name,
+          first_name : cm[i].first_name,
+          party      : cm[i].party,
+          state      : cm[i].state,
+        });
+     }
+    var dt = JSON.stringify(data, null, 2);
+    fs.writeFile('congress.json', dt);
+  });
+}
+
+getMembers();
+
 
 // proxy api requests
 Object.keys(proxyTable).forEach(function (context) {
