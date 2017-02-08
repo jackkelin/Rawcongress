@@ -19,6 +19,7 @@ class Controller extends BaseController
                 'X-Api-key' => 'PPo8NOUWRG9i9WcBKJVIVacNERznlT50adGL56wN'
             ]
         ]);
-        dd([json_decode($res->getBody())]);
+        $data = [json_decode($res->getBody())->results[0]->members];
+        return $data;
     }
 }
