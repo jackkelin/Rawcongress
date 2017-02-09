@@ -11,4 +11,14 @@
 |
 */
 
-Route::get('/', 'Controller@getCongressApiData');
+Route::get('/store', 'Controller@getCongressData');
+Route::get('/clear', 'Controller@clearData');
+Route::get('/', 'Controller@getMembers');
+
+
+
+//Route::get('/', function () {
+//    $members = DB::table('members')->get();
+//    return $members;
+////    return view('welcome', compact('tasks'));
+//});
