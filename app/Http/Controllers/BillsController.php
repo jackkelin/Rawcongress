@@ -25,7 +25,6 @@ class BillsController extends Controller
 
 
 	  	}
-
 	    $client = new Client();
 	    $res = $client->request('get', 'https://api.propublica.org/congress/v1/114/house/bills/introduced.json', [
 	        'headers' => [
