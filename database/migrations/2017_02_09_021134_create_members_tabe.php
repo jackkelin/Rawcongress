@@ -22,6 +22,7 @@ class CreateMembersTabe extends Migration
             $table->char('party', 1);
             $table->char('state', 2);
             $table->string('next_election');
+            $table->string('chamber');
             $table->timestamps();
         });
     }

@@ -11,9 +11,10 @@
 |
 */
 
-Route::get('/store', 'Controller@getCongressData');
+Route::get('/store/{chamber}', 'Controller@getCongressData');
 Route::get('/clear', 'Controller@clearData');
-Route::get('/', 'Controller@getMembers');
+Route::get('/chamber/{chamber}', 'Controller@getMembersType');
+Route::get('/', 'Controller@getHouseMembers');
 
 
 

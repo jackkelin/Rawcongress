@@ -8,22 +8,29 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use GuzzleHttp\Client;
 use App\Member;
+use DB;
 use Carbon\Carbon;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function getMembers()
+    public function getHouseMembers()
     {
         $members = Member::all();
         return $members;
     }
 
-    public function getCongressData()
+    public function getMembersType($chamber)
+    {
+        $members = Member::where('chamber', $chamber)->get();
+        return $members;
+    }
+
+    public function getCongressData($chamber)
     {
         $client = new Client();
-        $res = $client->request('get', 'https://api.propublica.org/congress/v1/114/house/members.json', [
+        $res = $client->request('get', 'https://api.propublica.org/congress/v1/114/' . $chamber . '/members.json', [
             'headers' => [
                 'X-Api-key' => 'PPo8NOUWRG9i9WcBKJVIVacNERznlT50adGL56wN'
             ]
@@ -39,7 +46,8 @@ class Controller extends BaseController
                     'last_name'      => $member->last_name,
                     'state'          => $member->state,
                     'party'          => $member->party,
-                    'next_election' => $member->next_election,
+                    'chamber'        => ucwords($chamber),
+                    'next_election'  => $member->next_election,
                     'created_at'     => Carbon::now(),
                     'updated_at'     => Carbon::now(),
                 ]
