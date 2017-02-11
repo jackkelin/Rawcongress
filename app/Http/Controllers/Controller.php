@@ -54,7 +54,7 @@ class Controller extends BaseController
             );
         };
     }
-
+    
     public function clearData()
     {
         Member::truncate();
