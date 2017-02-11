@@ -16,6 +16,8 @@ Route::get('/clear', 'Controller@clearData');
 Route::get('/chamber/{chamber}', 'Controller@getMembersType');
 Route::get('/', 'Controller@getHouseMembers');
 
+Route::get('/bills', 'BillsController@getBills');
+Route::get('/store/bills', 'BillsController@getBillsData');
 
 
 //Route::get('/', function () {
