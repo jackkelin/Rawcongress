@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use App\Bill;
+use GuzzleHttp\Client;
+use Carbon\Carbon;
+use App\Member;
+
 
 class BillsController extends Controller
 {
@@ -16,40 +18,20 @@ class BillsController extends Controller
 	  $request;
 	  //https://api.propublica.org/congress/v1/{congress}/{chamber}/bills/{type}.json
 	  	foreach ($congress as $congress_term ) {
-	  		$resURLParam = [];
-	  		array_push($congress_term, $resURLParam);
-	  		array_push($chamber_senate, $resURLParam);
+	  		$senateURL = $resURL . $congress_term . '/' . $chamber_senate . '/bills/';
+	  		$houseURL = $resURL . $congress_term . '/' . $chamber_house . '/bills/';
 	  		foreach ($types as $type ) {
-	  			$request = $client->request('get','blah');
-	  		}
-
-
+	  			$senateURL = $senateURL . $type . '.json';
+	  			$houseURL = $houseURL . $type . '.json';
+	  			echo '<br>';
+	  			echo $senateURL;
+	  			echo '<br>';
+	  			echo $houseURL;
+	  			echo '<br>';			
+		  		$senateURL = $resURL . $congress_term . '/' . $chamber_senate . '/bills/';
+		  		$houseURL = $resURL . $congress_term . '/' . $chamber_house . '/bills/';
+	  		}  
 	  	}
-	    $client = new Client();
-	    $res = $client->request('get', 'https://api.propublica.org/congress/v1/114/house/bills/introduced.json', [
-	        'headers' => [
-	            'X-Api-key' => 'PPo8NOUWRG9i9WcBKJVIVacNERznlT50adGL56wN'
-	        ]
-	    ]);
-
-	    $bills = json_decode($res->getBody())->results[0]->bills;
-	    foreach ($bills as $bill)
-	    {
-	        Bill::create(
-	            [
-	                'bill_number'       => $bill->number,
-	                'bill_uri'          => $bill->bill_uri,
-	                'title'             => $bill->title,
-	                'introduced_date'   => $bill->introduced_date,
-	                'cosponsors'        => $bill->cosponsors,
-	                'committees'        => $bill->committees,
-	                'latest_major_action_date' => $bill->latest_major_action_date,
-	                'latest_major_action' => $bill->latest_major_action,
-	                'created_at'     => Carbon::now(),
-	                'updated_at'     => Carbon::now(),
-	            ]
-	        );
-	    };
 	}
 	public function getBills() {
 	    $bills = Bill::all();
