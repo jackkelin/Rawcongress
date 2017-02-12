@@ -15,13 +15,13 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function getHouseMembers()
+    public function getMembers()
     {
         $members = Member::all();
         return $members;
     }
 
-    public function getMembersType($chamber)
+    public function getChamberType($chamber)
     {
         $members = Member::where('chamber', $chamber)->get();
         return $members;

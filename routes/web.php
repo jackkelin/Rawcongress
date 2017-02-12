@@ -16,8 +16,8 @@ Route::get('/store/bills', 'BillsController@getBillsData');
 
 Route::get('/store/{chamber}', 'Controller@getCongressData');
 Route::get('/clear', 'Controller@clearData');
-Route::get('/chamber/{chamber}', 'Controller@getMembersType');
-Route::get('/', 'Controller@getHouseMembers');
+Route::get('/chamber/{chamber}', 'Controller@getChamberType');
+Route::get('/', 'Controller@getMembers');
 
 
 
