@@ -12,7 +12,8 @@
 */
 
 Route::get('/bills', 'BillsController@getBills');
-Route::get('/store/bills', 'BillsController@getBillsData');
+Route::get('/clearbills', 'BillsController@clearBillData');
+Route::get('/storebills', 'BillsController@getBillsData');
 
 Route::get('/store/{chamber}', 'Controller@getCongressData');
 Route::get('/clear', 'Controller@clearData');
