@@ -67,14 +67,25 @@ class MembersController extends Controller
 
     public function getCidData() {
    		\Excel::load('cpid.xls', function($reader) {
-			    $results = $reader->get();
-			    $results = $reader->all();
-			    $collection = collect([]);
-			    foreach ($results as $result)
+			    $cpidResults = $reader->get();
+			    $cpidResults = $reader->all();
+			    $member = collect([]);
+
+			    foreach ($cpidResults as $result)
         	{
-        		$collection->push([$result->cid, $result->crpname]);
+        		$name = explode(", ", $result->crpname);
+        		$middle = explode(" ", implode(" ", $name)); //splitting the middle name
+        		$last_name = $name[0];
+        		$first_name = $middle[1];
+        		$member->push(
+        			[ $result->cid,
+        				$last_name,
+        				$first_name,
+        				Member::where('last_name', $last_name)->where('first_name', $first_name)->get()
+        			]
+        		);
         	}
-			    echo($collection);
+			    echo($member);
 			});
     }
 
