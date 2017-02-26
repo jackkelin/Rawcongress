@@ -22,7 +22,6 @@ Route::get('/', 'Controller@getMembers');
 
 
 
-
 //Route::get('/', function () {
 //    $members = DB::table('members')->get();
 //    return $members;
