@@ -21,7 +21,7 @@ Route::get('/', 'MembersController@getMembers');
 Route::get('/store/{chamber}', 'MembersController@getCongressData');
 Route::get('/clear', 'MembersController@clearData');
 Route::get('/chamber/{chamber}', 'MembersController@getChamberType');
-Route::get('/openSe', 'MembersController@getOpenSecret');
+Route::get('/cid', 'MembersController@getCidData');
 
 
 

@@ -8,6 +8,7 @@ use App\Member;
 use DB;
 use Carbon\Carbon;
 
+
 class MembersController extends Controller
 {
     public function getMembers()
@@ -63,4 +64,19 @@ class MembersController extends Controller
     {
         Member::truncate();
     }
+
+    public function getCidData() {
+   		\Excel::load('cpid.xls', function($reader) {
+			    $results = $reader->get();
+			    $results = $reader->all();
+			    $collection = collect([]);
+			    foreach ($results as $result)
+        	{
+        		$collection->push([$result->cid, $result->crpname]);
+        	}
+			    echo($collection);
+			});
+    }
+
+
 }
