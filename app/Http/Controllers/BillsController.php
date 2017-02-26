@@ -21,7 +21,7 @@ class BillsController extends Controller {
 	  	$request = $client->request('get',$url, [
 	  	    'headers' => [
 	  	        'X-Api-key' => 'PPo8NOUWRG9i9WcBKJVIVacNERznlT50adGL56wN'
-	  	    ]    
+	  	    ]
 	  	]);
 	  	// ADD to DB
 	  	$bills = json_decode($request->getBody())->results[0]->bills;
@@ -40,7 +40,7 @@ class BillsController extends Controller {
 	  	            'updated_at'     => Carbon::now(),
 	  	        ]
 	  	    );
-	  	};	
+	  	};
 	  }
 		foreach ($congress as $congress_term ) {
 			$requestUrl_senate = $requestUrl . $congress_term . '/' . $chamber_senate . '/bills/';
@@ -54,7 +54,7 @@ class BillsController extends Controller {
 				// Reset Request URL
 				$requestUrl_senate = $requestUrl . $congress_term . '/' . $chamber_senate . '/bills/';
 				$requestUrl_house = $requestUrl . $congress_term . '/' . $chamber_house . '/bills/';
-			}  
+			}
 		}
 
 

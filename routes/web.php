@@ -11,14 +11,17 @@
 |
 */
 
+
+
 Route::get('/bills', 'BillsController@getBills');
 Route::get('/clearbills', 'BillsController@clearBillData');
 Route::get('/storebills', 'BillsController@getBillsData');
 
-Route::get('/store/{chamber}', 'Controller@getCongressData');
-Route::get('/clear', 'Controller@clearData');
-Route::get('/chamber/{chamber}', 'Controller@getChamberType');
-Route::get('/', 'Controller@getMembers');
+Route::get('/', 'MembersController@getMembers');
+Route::get('/store/{chamber}', 'MembersController@getCongressData');
+Route::get('/clear', 'MembersController@clearData');
+Route::get('/chamber/{chamber}', 'MembersController@getChamberType');
+Route::get('/openSe', 'MembersController@getOpenSecret');
 
 
 
