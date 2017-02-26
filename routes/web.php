@@ -25,7 +25,6 @@ Route::get('/openSe', 'MembersController@getOpenSecret');
 
 
 
-
 //Route::get('/', function () {
 //    $members = DB::table('members')->get();
 //    return $members;

@@ -15,14 +15,18 @@ class CreateBillsTable extends Migration
     {
         Schema::create('bills', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('bill_number');
+            $table->text('bill_num');
             $table->text('bill_uri');
-            $table->text('title');
-            $table->text('introduced_date');
-            $table->char('cosponsors');
-            $table->text('committees');
-            $table->text('latest_major_action_date');
-            $table->text('latest_major_action');
+            $table->text('bill_title');
+            $table->text('bill_intro_date');
+            $table->char('bill_cosponsors');
+            $table->char('bill_sponsor_id');
+            $table->text('bill_committees');
+            $table->text('bill_latest_major_action_date');
+            $table->text('bill_latest_major_action');
+            $table->text('bill_congress_term');
+            $table->text('bill_chamber');
+
             $table->timestamps();
         });
     }

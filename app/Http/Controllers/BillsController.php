@@ -12,7 +12,7 @@ class BillsController extends Controller {
 	public function getBillsData() {
 		$requestUrl = 'https://api.propublica.org/congress/v1/';
 	  $congress = [];
-	  $congress = range('105', '114');
+	  $congress = range('105', '115');
 	  $chamber_senate = 'senate';
 	  $chamber_house = 'house';
 	  $types = ['introduced', 'updated', 'passed', 'major'];
@@ -26,16 +26,25 @@ class BillsController extends Controller {
 	  	// ADD to DB
 	  	$bills = json_decode($request->getBody())->results[0]->bills;
 	  	foreach ($bills as $bill) {
+	  		// Parse sponsor uri, get member id
+	  		$member_id = $bill->sponsor_uri;
+  			$member_id = explode('/', $member_id);
+				$member_id = end($member_id);
+				$member_id = explode('.', $member_id);
+				$member_id = $member_id[0];
 	  	    Bill::create(
 	  	        [
-	  	            'bill_number'       => $bill->number,
-	  	            'bill_uri'          => $bill->bill_uri,
-	  	            'title'             => $bill->title,
-	  	            'introduced_date'   => $bill->introduced_date,
-	  	            'cosponsors'        => $bill->cosponsors,
-	  	            'committees'        => $bill->committees,
-	  	            'latest_major_action_date' => $bill->latest_major_action_date,
-	  	            'latest_major_action' => $bill->latest_major_action,
+	  	            'bill_num' => $bill->number,
+	  	            'bill_uri' => $bill->bill_uri,
+	  	            'bill_title' => $bill->title,
+	  	            'bill_intro_date' => $bill->introduced_date,
+	  	            'bill_cosponsors' => $bill->cosponsors,
+	  	            'bill_sponsor_id' => $member_id, 		
+	  	            'bill_committees' => $bill->committees,
+	  	            'bill_latest_major_action_date' => $bill->latest_major_action_date,
+	  	            'bill_latest_major_action' => $bill->latest_major_action,
+	  	            'bill_congress_term' => 'temp',
+	  	            'bill_chamber' => 'temp',
 	  	            'created_at'     => Carbon::now(),
 	  	            'updated_at'     => Carbon::now(),
 	  	        ]
