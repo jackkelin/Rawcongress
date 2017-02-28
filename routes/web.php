@@ -22,6 +22,8 @@ Route::get('/store/{chamber}', 'MembersController@getCongressData');
 Route::get('/clear', 'MembersController@clearData');
 Route::get('/chamber/{chamber}', 'MembersController@getChamberType');
 Route::get('/cid', 'MembersController@getCidData');
+Route::get('/contributors', 'MembersController@getContributors');
+Route::get('/contribution', 'MembersController@fillContribution');
 
 
 
