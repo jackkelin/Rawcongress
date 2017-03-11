@@ -15,4 +15,24 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    public static function uriToId($uri)
+    {
+        $id = $uri;
+        $id = explode('/', $id);
+        $id = end($id);
+        $id = explode('.', $id);
+        $id = $id[0];
+        return $id;
+    }
+    // Propublica Request
+    public static function proRequest($url)
+    {
+      $client = new Client();
+      $request = $client->request('get',$url, [
+          'headers' => [
+              'X-Api-key' => 'PPo8NOUWRG9i9WcBKJVIVacNERznlT50adGL56wN'
+          ]
+      ]);
+      return $request;
+    }
 }

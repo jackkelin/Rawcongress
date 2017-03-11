@@ -3,55 +3,54 @@
 namespace App\Http\Controllers;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use DB;
 use App\Bill;
 
 // https://api.propublica.org/congress/v1/{congress}/{chamber}/bills/{type}.json
 
-class BillsController extends Controller {
+class BillsController extends Controller 
+{
 
-	public function getBillsData() {
-		$requestUrl = 'https://api.propublica.org/congress/v1/';
+	public function getBillsData() 
+	{
+	  $requestUrl = 'https://api.propublica.org/congress/v1/';
 	  $congress = [];
 	  $congress = range('105', '115');
 	  $chamber_senate = 'senate';
 	  $chamber_house = 'house';
 	  $types = ['introduced', 'updated', 'passed', 'major'];
+
 	  function requestBillsData($url) {
-	  	$client = new Client();
-	  	$request = $client->request('get',$url, [
-	  	    'headers' => [
-	  	        'X-Api-key' => 'PPo8NOUWRG9i9WcBKJVIVacNERznlT50adGL56wN'
-	  	    ]
-	  	]);
-	  	// ADD to DB
+	  	// add to db
+	  	$request = Controller::proRequest($url);
 	  	$bills = json_decode($request->getBody())->results[0]->bills;
 	  	foreach ($bills as $bill) {
-	  		// Parse sponsor uri, get member id
-	  		$member_id = $bill->sponsor_uri;
-  			$member_id = explode('/', $member_id);
-				$member_id = end($member_id);
-				$member_id = explode('.', $member_id);
-				$member_id = $member_id[0];
+	  		$bill_id = Controller::uriToId($bill->bill_uri);
+				$member_id = Controller::uriToId($bill->sponsor_uri);
 	  	    Bill::create(
-	  	        [
-	  	            'bill_num' => $bill->number,
-	  	            'bill_uri' => $bill->bill_uri,
-	  	            'bill_title' => $bill->title,
-	  	            'bill_intro_date' => $bill->introduced_date,
-	  	            'bill_cosponsors' => $bill->cosponsors,
-	  	            'bill_sponsor_id' => $member_id, 		
-	  	            'bill_committees' => $bill->committees,
-	  	            'bill_latest_major_action_date' => $bill->latest_major_action_date,
-	  	            'bill_latest_major_action' => $bill->latest_major_action,
-	  	            'bill_congress_term' => 'temp',
-	  	            'bill_chamber' => 'temp',
-	  	            'created_at'     => Carbon::now(),
-	  	            'updated_at'     => Carbon::now(),
-	  	        ]
+  	        [
+	            'bill_num' => $bill->number,
+	            'bill_uri' => $bill->bill_uri,
+	            'bill_id' => $bill_id,
+	            'bill_title' => $bill->title,
+	            'bill_intro_date' => $bill->introduced_date,
+	            'bill_cosponsors' => $bill->cosponsors,
+	            'bill_sponsor_id' => $member_id, 		
+	            'bill_committees' => $bill->committees,
+	            'bill_pdf' => 'temp',
+	            'bill_latest_major_action_date' => $bill->latest_major_action_date,
+	            'bill_latest_major_action' => $bill->latest_major_action,
+	            'bill_congress_term' => 'temp',
+	            'bill_chamber' => 'temp',
+	            'created_at'     => Carbon::now(),
+	            'updated_at'     => Carbon::now(),
+  	        ]
 	  	    );
 	  	};
 	  }
-		foreach ($congress as $congress_term ) {
+
+		foreach ($congress as $congress_term ) 
+		{
 			$requestUrl_senate = $requestUrl . $congress_term . '/' . $chamber_senate . '/bills/';
 			$requestUrl_house = $requestUrl . $congress_term . '/' . $chamber_house . '/bills/';
 			foreach ($types as $type ) {
@@ -63,16 +62,32 @@ class BillsController extends Controller {
 				// Reset Request URL
 				$requestUrl_senate = $requestUrl . $congress_term . '/' . $chamber_senate . '/bills/';
 				$requestUrl_house = $requestUrl . $congress_term . '/' . $chamber_house . '/bills/';
+				getBillUri();
 			}
 		}
-
-
 	}
-	public function getBills() {
+	public function getBillUri()
+	{
+		// Request Bill uri - reference db
+		$get_bill_uris = DB::table('bills')->pluck('bill_uri');
+		foreach ($get_bill_uris as $bill_uri)
+		{
+			$request = Controller::proRequest($bill_uri);
+			$request = json_decode($request->getBody())->results[0];
+			$pdf = $request->gpo_pdf_uri;
+			DB::table('bills')
+	      ->where('bill_uri', $bill_uri)
+	      ->update(['bill_pdf' => $pdf]);
+			
+		}
+	}
+	public function getBills() 
+	{
 	    $bills = Bill::all();
 	    return $bills;
 	}
-	public function clearBillData() {
+	public function clearBillData() 
+	{
 		Bill::truncate();
 	}
 }
