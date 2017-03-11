@@ -24,6 +24,10 @@ Route::get('/chamber/{chamber}', 'MembersController@getChamberType');
 Route::get('/cid', 'MembersController@getCidData');
 Route::get('/test', 'BillsController@getBillUri');
 
+Route::get('/contributors', 'MembersController@getContributors');
+Route::get('/contribution', 'MembersController@fillContribution');
+
+
 
 //Route::get('/', function () {
 //    $members = DB::table('members')->get();

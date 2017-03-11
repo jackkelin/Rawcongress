@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Member;
+use App\Contribution;
 use DB;
 use Carbon\Carbon;
 
@@ -13,7 +14,7 @@ class MembersController extends Controller
 {
     public function getMembers()
     {
-        $members = Member::all();
+        $members = Member::orderBy('last_name')->get();
         return $members;
     }
 
@@ -23,9 +24,8 @@ class MembersController extends Controller
         return $members;
     }
 
-    public function getCongressData()
+    public function getCongressData($chamber)
     {
-    	$chamber = 'senate';
         $client = new Client();
         $res = $client->request('get', 'https://api.propublica.org/congress/v1/114/' . $chamber . '/members.json', [
             'headers' => [
@@ -33,7 +33,6 @@ class MembersController extends Controller
             ]
         ]);
 
-        dd(json_decode($res->getBody()));
 
         $members = json_decode($res->getBody())->results[0]->members;
         foreach ($members as $member)
@@ -69,7 +68,7 @@ class MembersController extends Controller
    		\Excel::load('cpid.xls', function($reader) {
 			    $cpidResults = $reader->get();
 			    $cpidResults = $reader->all();
-			    $member = collect([]);
+			    $member = collect();
 
 			    foreach ($cpidResults as $result)
         	{
@@ -78,16 +77,55 @@ class MembersController extends Controller
         		$last_name = $name[0];
         		$first_name = $middle[1];
         		$member->push(
-        			[ $result->cid,
+        			[
+        			    $result->cid,
         				$last_name,
         				$first_name,
-        				Member::where('last_name', $last_name)->where('first_name', $first_name)->get()
+        				Member::where('last_name', $last_name)->where('first_name', $first_name)->update(['cid' => $result->cid]),
+        				Member::where('last_name', $last_name)->where('first_name', $first_name)->get(),
+                        Contribution::where('cid',  $result->cid)->get()
         			]
         		);
         	}
-			    echo($member);
+			    echo(json_encode($member));
 			});
     }
 
+    public function getContributors()
+    {
+        $contributors = Contribution::all();
+        echo($contributors);
+    }
+
+    public function fillContribution()
+    {
+        $members = Member::WhereNotNull('cid')->get();
+        $client = new Client();
+        foreach ($members as $member)
+        {
+            $res = $client->request('get', 'https://www.opensecrets.org/api/?method=candContrib&cid=' .  $member->cid . '&cycle=2016&apikey=e70c0d7425b91027c3c566a9c298c50a&output=json');
+            $response = json_decode($res->getBody(), true);
+            $contributors = $response['response']['contributors']['contributor'];
+            $attributes = $response['response']['contributors']['@attributes'];
+            $cid = $attributes['cid'];
+            $cycle = $attributes['cycle'];
+            $notice = $attributes['notice'];
+
+            foreach ($contributors as $contributor)
+            {
+                Contribution::create(
+                    [
+                        'cid'                   =>  $cid,
+                        'organization_name'     =>  $contributor['@attributes']['org_name'],
+                        'total'                 =>  $contributor['@attributes']['total'],
+                        'cycle'                 =>  $cycle,
+                        'notice'                =>  $notice,
+                        'pacs'                  =>  $contributor['@attributes']['pacs'],
+                        'indivs'                =>  $contributor['@attributes']['indivs'],
+                    ]
+                );
+            };
+        }
+    }
 
 }
