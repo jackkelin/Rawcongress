@@ -23,11 +23,12 @@ class CreateBillsTable extends Migration
             $table->char('bill_cosponsors');
             $table->char('bill_sponsor_id');
             $table->text('bill_committees');
-            $table->text('bill_pdf');
+            $table->text('bill_pdf')->nullable();
+            $table->text('bill_summary')->nullable();
             $table->text('bill_latest_major_action_date');
             $table->text('bill_latest_major_action');
-            $table->text('bill_congress_term');
-            $table->text('bill_chamber');
+            $table->text('bill_congress_term')->nullable();
+            $table->text('bill_chamber')->nullable();
             $table->timestamps();
         });
     }

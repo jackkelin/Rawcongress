@@ -15,6 +15,7 @@ class Bill extends Model {
         'bill_sponsor_id',
         'bill_committees',
         'bill_pdf',
+        'bill_summary',
         'bill_latest_major_action_date',
         'bill_latest_major_action',
         'bill_congress_term',

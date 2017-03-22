@@ -37,11 +37,8 @@ class BillsController extends Controller
 	            'bill_cosponsors' => $bill->cosponsors,
 	            'bill_sponsor_id' => $member_id, 		
 	            'bill_committees' => $bill->committees,
-	            'bill_pdf' => 'temp',
 	            'bill_latest_major_action_date' => $bill->latest_major_action_date,
 	            'bill_latest_major_action' => $bill->latest_major_action,
-	            'bill_congress_term' => 'temp',
-	            'bill_chamber' => 'temp',
 	            'created_at'     => Carbon::now(),
 	            'updated_at'     => Carbon::now(),
   	        ]
@@ -62,7 +59,7 @@ class BillsController extends Controller
 				// Reset Request URL
 				$requestUrl_senate = $requestUrl . $congress_term . '/' . $chamber_senate . '/bills/';
 				$requestUrl_house = $requestUrl . $congress_term . '/' . $chamber_house . '/bills/';
-				getBillUri();
+				//getBillUri();
 			}
 		}
 	}
@@ -74,11 +71,18 @@ class BillsController extends Controller
 		{
 			$request = Controller::proRequest($bill_uri);
 			$request = json_decode($request->getBody())->results[0];
-			$pdf = $request->gpo_pdf_uri;
-			DB::table('bills')
-	      ->where('bill_uri', $bill_uri)
-	      ->update(['bill_pdf' => $pdf]);
-			
+			// DB::table('bills')
+	  //     ->where('bill_uri', $bill_uri)
+	  //     ->update('bill_summary' => $request->summary)
+	  //     ->update('bill_congress_term' => $request->congress)
+	  //     ->update('bill_pdf' => $request->gpo_pdf_uri);
+
+			// Bill::where('bill_uri', $bill_uri)
+	  //     ->update(['bill_summary' => $request->summary])
+	  //     ->update(['bill_congress_term' => $request->congress])
+	  //     ->update(['bill_pdf' => $request->gpo_pdf_uri]); 
+
+      Bill::where('bill_uri', $bill_uri)->update(['bill_summary' => $request->summary], ['bill_congress_term' => $request->congress], ['bill_pdf' => $request->gpo_pdf_uri]);
 		}
 	}
 	public function getBills() 
